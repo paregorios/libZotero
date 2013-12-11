@@ -189,11 +189,14 @@ def zrequest(url, method='GET', body=None, headers={}):
     r = None
     try:
         res = opener.open(req)
-        r = zotero.Response(res)
-        return r
     except (urllib2.URLError, urllib2.HTTPError) as err:
         r = zotero.Response(err)
-        return r
+    else:
+        rheaders = res.info()
+        for k in rheaders.keys():
+            logging.debug("response header %s: '%s'" % (k, rheaders[k]))
+        r = zotero.Response(res)
+    return r
 
 
 def responseIsError(response):
